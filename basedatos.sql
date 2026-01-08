@@ -32,14 +32,14 @@ add foreign key (idtienda) references tiendas(idtienda),
 add foreign key (idmarca) references marcas(idmarca);
 --
 delimiter ||
-create function existeCodigoSKU(f_codigoSKU varchar(40))
+create function existeCodigoSKU(f_codigosku varchar(40))
 returns bit
 begin
 	declare i int;
 	set i=0;
 	while (i<(select max(idcalzado) from calzados)) do
 	if ((select codigosku from calzados
-		 where idcalzado=(i+1)) like f_codigoSKU)
+		 where idcalzado=(i+1)) like f_codigosku)
 	then return 1;
 	end if;
 	set i=i+1;

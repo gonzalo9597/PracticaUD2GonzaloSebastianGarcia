@@ -209,11 +209,7 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
         String command = e.getActionCommand();
         switch (command) {
             case "Opciones":
-                // Si el diálogo no existe o fue cerrado, lo recreamos
-                if (vista.adminPasswordDialog == null || !vista.adminPasswordDialog.isDisplayable()) {
-                    vista.setAdminDialog(); // recrea el diálogo
-                }
-                vista.adminPasswordDialog.setVisible(true); // ahora sí lo mostramos
+                vista.adminPasswordDialog.setVisible(true);
                 break;
             case "Desconectar":
             case "Conectar": // para el botón del popup
@@ -437,7 +433,7 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
         Vector<String> columnNames = new Vector<>();
         int columnCount = metaData.getColumnCount();
         for (int column = 1; column <= columnCount; column++) {
-            columnNames.add(metaData.getColumnName(column));
+            columnNames.add(metaData.getColumnLabel(column));
         }
 
         // data of the table
@@ -472,7 +468,7 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
         Vector<String> columnNames = new Vector<>();
         int columnCount = metaData.getColumnCount();
         for (int column = 1; column <= columnCount; column++) {
-            columnNames.add(metaData.getColumnName(column));
+            columnNames.add(metaData.getColumnLabel(column));
         }
 
         // data of the table
@@ -502,7 +498,7 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
         Vector<String> columnNames = new Vector<>();
         int columnCount = metaData.getColumnCount();
         for (int column = 1; column <= columnCount; column++) {
-            columnNames.add(metaData.getColumnName(column));
+            columnNames.add(metaData.getColumnLabel(column));
         }
 
         // data of the table

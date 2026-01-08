@@ -138,12 +138,12 @@ public class Vista extends JFrame {
     }
 
     public void crearDialogDesconectado() {
-        dialogDesconectado = new JDialog(this, "Desconectado", true); // modal
+        dialogDesconectado = new JDialog(this, "Desconectado", false); // modal
         dialogDesconectado.setSize(300, 150);
         dialogDesconectado.setLocationRelativeTo(this);
         dialogDesconectado.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
-        JLabel lblMensaje = new JLabel("Estás desconectado", SwingConstants.CENTER);
+        JLabel lblMensaje = new JLabel("Estás desconectado :(", SwingConstants.CENTER);
         lblMensaje.setFont(new Font("Arial", Font.BOLD, 14));
 
         dialogDesconectado.setLayout(new BorderLayout());

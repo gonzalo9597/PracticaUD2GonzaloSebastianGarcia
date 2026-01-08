@@ -1,5 +1,7 @@
 package gui;
 
+import com.formdev.flatlaf.themes.FlatMacDarkLaf;
+import com.formdev.flatlaf.themes.FlatMacLightLaf;
 import util.Util;
 
 import javax.swing.*;
@@ -16,11 +18,14 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
     private Vista vista;
     private boolean refrescar;
     private boolean conectado;
+    private boolean darkMode;
+
 
     public Controlador(Modelo modelo, Vista vista) {
         this.modelo = modelo;
         this.vista = vista;
         conectado = true; // al inicio estamos conectados
+        darkMode = false;
         modelo.conectar();
         setOptions();
 
@@ -64,6 +69,7 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
         vista.itemDesconectar.addActionListener(listener);
         // --- Botón validar admin ---
         vista.btnValidate.addActionListener(listener);
+        vista.itemDarkMode.addActionListener(listener);
     }
 
     private void addWindowListeners(WindowListener listener) {
@@ -215,6 +221,25 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
                     desconectar();
                 } else {
                     conectar();
+                }
+                break;
+            case "Dark Mode":
+                try {
+                    darkMode = !darkMode;
+
+                    if (darkMode) {
+                        UIManager.setLookAndFeel(new FlatMacDarkLaf());
+                        vista.itemDarkMode.setText("Light Mode");
+                    } else {
+                        UIManager.setLookAndFeel(new FlatMacLightLaf());
+                        vista.itemDarkMode.setText("Dark Mode");
+                    }
+
+                    SwingUtilities.updateComponentTreeUI(vista);
+                    vista.pack();
+
+                } catch (Exception ex) {
+                    ex.printStackTrace();
                 }
                 break;
             case "Salir":

@@ -16,7 +16,6 @@ public class Vista extends JFrame {
 
     // diálogo desconectado
     JDialog dialogDesconectado;
-    JButton btnConectar;
 
     // calzados
     JPanel JPanelCalzado;
@@ -66,6 +65,7 @@ public class Vista extends JFrame {
     // menubar
     JMenuItem itemOpciones;
     JMenuItem itemDesconectar;
+    JMenuItem itemDarkMode;
     JMenuItem itemSalir;
 
     // cuadro diálogo OptionDialog
@@ -108,11 +108,14 @@ public class Vista extends JFrame {
         itemOpciones.setActionCommand("Opciones");
         itemDesconectar = new JMenuItem("Desconectar");
         itemDesconectar.setActionCommand("Desconectar");
+        itemDarkMode = new JMenuItem("Dark Mode");
+        itemDarkMode.setActionCommand("Dark Mode");
         itemSalir = new JMenuItem("Salir");
         itemSalir.setActionCommand("Salir");
 
         menu.add(itemOpciones);
         menu.add(itemDesconectar);
+        menu.add(itemDarkMode);
         menu.add(itemSalir);
 
         mbBar.add(menu);

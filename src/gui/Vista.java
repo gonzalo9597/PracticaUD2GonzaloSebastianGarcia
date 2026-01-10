@@ -59,20 +59,21 @@ public class Vista extends JFrame {
     JPanel JPanelPedido;
     JTextField txtCodigoSeguimiento;
     JComboBox comboCalzado;
+    JComboBox comboPedidoMarca;
+    JComboBox comboPedidoTienda;
     JSpinner spinnerCantidad;
     JTextField txtNombreDestinatario;
-    JComboBox comboTipoEnvio;
-    JRadioButton radioButtonDomicilio;
-    JRadioButton radioButtonTienda;
-    JRadioButton radioButtonPuntoDeRecogida;
     ButtonGroup buttonGroup1;
+    JRadioButton jrbDomicilio;
+    JRadioButton jrbTienda;
+    JRadioButton jrbPuntoDeRecogida;
     JTextField txtDireccion;
     JButton btnPedidosEliminar;
     JButton btnPedidosModificar;
     JButton btnPedidosAnadir;
     JTable pedidosTabla;
 
-    // búsqueda
+    //busqueda
     private JLabel etiquetaEstado;
 
     // default table model
@@ -116,6 +117,7 @@ public class Vista extends JFrame {
         setMenu();
         setAdminDialog();
         setEnumComboBox();
+        //setTipoEnvioRadioButtons();
         setTableModels();
         crearDialogDesconectado();
     }
@@ -181,11 +183,37 @@ public class Vista extends JFrame {
         }
         comboTipoCalzado.setSelectedIndex(-1);
 
-        for (TipoEnvio constant : TipoEnvio.values()) {
-            comboTipoEnvio.addItem(constant.getValor());
-        }
-        comboTipoEnvio.setSelectedIndex(-1);
+        // Combos para pedidos
+      //  comboPedidoMarca = new JComboBox<>();
+      //  comboPedidoTienda = new JComboBox<>();
+
+      //  for (int i = 0; i < comboMarca.getItemCount(); i++) {
+           // comboPedidoMarca.addItem(comboMarca.getItemAt(i));
+      //  }
+
+        //for (int i = 0; i < comboTienda.getItemCount(); i++) {
+       //     comboPedidoTienda.addItem(comboTienda.getItemAt(i));
+     //   }
+
+       // JPanelPedido.add(comboPedidoMarca);
+       // JPanelPedido.add(comboPedidoTienda);
     }
+
+    //private void setTipoEnvioRadioButtons() {
+        // Crear el ButtonGroup
+        //buttonGroup1 = new ButtonGroup();
+
+        // Crear radio buttons dinámicamente desde el enum
+       // for (TipoEnvio tipo : TipoEnvio.values()) {
+          //  JRadioButton rb = new JRadioButton(tipo.getValor());
+          //  rb.setActionCommand(tipo.name()); // guardar el enum para recuperar luego
+           // buttonGroup1.add(rb);
+           // JPanelPedido.add(rb); // añadir al panel de pedidos
+       // }
+
+        // Opcional: no seleccionar ninguno al inicio
+      //  buttonGroup1.clearSelection();
+ //   }
 
     private void setTableModels() {
         dtmCalzados = new DefaultTableModel();
@@ -197,8 +225,8 @@ public class Vista extends JFrame {
         dtmTiendas = new DefaultTableModel();
         tiendasTabla.setModel(dtmTiendas);
 
-        dtmPedidos = new DefaultTableModel();
-        pedidosTabla.setModel(dtmCalzados);
+      //  dtmPedidos = new DefaultTableModel();
+     //   pedidosTabla.setModel(dtmPedidos);
     }
 
     public void mostrarDialogDesconectado() {

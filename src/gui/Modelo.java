@@ -155,6 +155,39 @@ public class Modelo {
                 }
         }
     }
+    void insertarPedido(String codigoSeguimiento,String idCalzado, String idTienda, String idMarca, int cantidad,
+                        String nombreDestinatario, String tipoEnvio, String direccion) {
+        String sentenciaSql = "INSERT INTO pedidos (codigoseguimiento, idcalzado, idtienda, idmarca, cantidad, " +
+                "nombredestinatario, tipoenvio, direccion) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?,?)";
+        PreparedStatement sentencia = null;
+
+        int idcalzado = Integer.valueOf(idCalzado.split(" ")[0]);
+        int idtienda = Integer.valueOf(idTienda.split(" ")[0]);
+        int idmarca = Integer.valueOf(idMarca.split(" ")[0]);
+
+        try {
+            sentencia = conexion.prepareStatement(sentenciaSql);
+            sentencia.setString(1, codigoSeguimiento);
+            sentencia.setInt(2, idcalzado);
+            sentencia.setInt(3, idtienda);
+            sentencia.setInt(4, idmarca);
+            sentencia.setInt(5, cantidad);
+            sentencia.setString(6, nombreDestinatario);
+            sentencia.setString(7, tipoEnvio);
+            sentencia.setString(7, direccion);
+            sentencia.executeUpdate();
+        } catch (SQLException sqle) {
+            sqle.printStackTrace();
+        } finally {
+            if (sentencia != null)
+                try {
+                    sentencia.close();
+                } catch (SQLException sqle) {
+                    sqle.printStackTrace();
+                }
+        }
+    }
     void modificarTienda(String nombreTienda, String email, String telefono, String tipoTienda, String web, int idTienda){
 
         String sentenciaSql = "UPDATE tiendas SET nombretienda = ?, email = ?, telefono = ?, tipotienda = ?, web = ?" +
@@ -239,6 +272,40 @@ public class Modelo {
                 }
         }
     }
+    void modificarPedido(String codigoSeguimiento,String idCalzado, String idTienda, String idMarca, int cantidad,
+                         String nombreDestinatario, String tipoEnvio, String direccion, int idPedido) {
+
+        String sentenciaSql = "UPDATE pedidos SET codigoseguimiento = ?, idcalzado = ?, idtienda = ?, idmarca = ?, " +
+                "cantidad = ?, nombredestinatario = ?, tipoenvio = ?, direccion = ? WHERE idpedido = ?";
+        PreparedStatement sentencia = null;
+
+        int idcalzado = Integer.valueOf(idCalzado.split(" ")[0]);
+        int idtienda = Integer.valueOf(idTienda.split(" ")[0]);
+        int idmarca = Integer.valueOf(idMarca.split(" ")[0]);
+
+        try {
+            sentencia = conexion.prepareStatement(sentenciaSql);
+            sentencia.setString(1, codigoSeguimiento);
+            sentencia.setInt(2, idcalzado);
+            sentencia.setInt(3, idtienda);
+            sentencia.setInt(4, idmarca);
+            sentencia.setInt(5, cantidad);
+            sentencia.setString(6, nombreDestinatario);
+            sentencia.setString(7, tipoEnvio);
+            sentencia.setString(8, direccion);
+            sentencia.setInt(9, idPedido);
+            sentencia.executeUpdate();
+        } catch (SQLException sqle) {
+            sqle.printStackTrace();
+        } finally {
+            if (sentencia != null)
+                try {
+                    sentencia.close();
+                } catch (SQLException sqle) {
+                    sqle.printStackTrace();
+                }
+        }
+    }
     void eliminarTienda(int idTienda) {
         String sentenciaSql = "DELETE FROM tiendas WHERE idtienda = ?";
         PreparedStatement sentencia = null;
@@ -298,6 +365,25 @@ public class Modelo {
                 }
         }
     }
+    void eliminarPedido(int idpedido) {
+        String sentenciaSql = "DELETE FROM pedidos WHERE idpedido = ?";
+        PreparedStatement sentencia = null;
+
+        try {
+            sentencia = conexion.prepareStatement(sentenciaSql);
+            sentencia.setInt(1, idpedido);
+            sentencia.executeUpdate();
+        } catch (SQLException sqle) {
+            sqle.printStackTrace();
+        } finally {
+            if (sentencia != null)
+                try {
+                    sentencia.close();
+                } catch (SQLException sqle) {
+                    sqle.printStackTrace();
+                }
+        }
+    }
     ResultSet consultarTienda() throws SQLException {
         String sentenciaSql = "SELECT idtienda as 'ID', " +
                 "nombretienda as 'Nombre tienda', " +
@@ -345,7 +431,29 @@ public class Modelo {
         resultado = sentencia.executeQuery();
         return resultado;
     }
-
+    ResultSet consultarPedidos() throws SQLException {
+        String sentenciaSql = "SELECT p.idpedido as 'ID', " +
+                "p.codigoseguimiento as 'Código de seguimiento', " +
+                "concat(c.idcalzado, ' - ', c.modelo) as 'Calzado', " +
+                "concat(t.idtienda, ' - ', t.nombretienda) as 'Tienda', " +
+                "concat(m.idmarca, ' - ', m.nombrelegalempresa, ', ', m.nombremarca) as 'Marca', " +
+                "p.cantidad as 'Cantidad', " +
+                "p.nombredestinatario as 'Nombre del destinatario', " +
+                "p.tipoenvio as 'Tipo de envío', " +
+                "p.direccion as 'Dirección', " +
+                "FROM pedidos as p " +
+                "inner join calzados as c " +
+                "on c.idcalzado = p.idcalzado " +
+                "inner join tiendas as t " +
+                "on t.idtienda = c.idtienda " +
+                "inner join marcas as m " +
+                "on m.idmarca = c.idmarca";
+        PreparedStatement sentencia = null;
+        ResultSet resultado = null;
+        sentencia = conexion.prepareStatement(sentenciaSql);
+        resultado = sentencia.executeQuery();
+        return resultado;
+    }
     private void getPropValues() {
         InputStream inputStream = null;
         try {
@@ -440,5 +548,22 @@ public class Modelo {
             e.printStackTrace();
         }
         return nameExists;
+    }
+
+    public boolean pedidoCodigoSeguimientoYaExiste(String codigoSeguimiento) {
+        String salesConsult = "SELECT existeCodigoSeguimiento(?)";
+        PreparedStatement function;
+        boolean codigoSeguimientoExists = false;
+        try {
+            function = conexion.prepareStatement(salesConsult);
+            function.setString(1, codigoSeguimiento);
+            ResultSet rs = function.executeQuery();
+            rs.next();
+
+            codigoSeguimientoExists = rs.getBoolean(1);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return codigoSeguimientoExists;
     }
 }

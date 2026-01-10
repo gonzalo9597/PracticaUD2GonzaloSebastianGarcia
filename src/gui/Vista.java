@@ -3,6 +3,7 @@ package gui;
 import com.github.lgooddatepicker.components.DatePicker;
 import gui.base.enums.Calzados;
 import gui.base.enums.TiposTiendas;
+import gui.base.enums.TipoEnvio;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -54,6 +55,23 @@ public class Vista extends JFrame {
     JButton btnTiendasEliminar;
     JTable tiendasTabla;
 
+    // pedidos
+    JPanel JPanelPedido;
+    JTextField txtCodigoSeguimiento;
+    JComboBox comboCalzado;
+    JSpinner spinnerCantidad;
+    JTextField txtNombreDestinatario;
+    JComboBox comboTipoEnvio;
+    JRadioButton radioButtonDomicilio;
+    JRadioButton radioButtonTienda;
+    JRadioButton radioButtonPuntoDeRecogida;
+    ButtonGroup buttonGroup1;
+    JTextField txtDireccion;
+    JButton btnPedidosEliminar;
+    JButton btnPedidosModificar;
+    JButton btnPedidosAnadir;
+    JTable pedidosTabla;
+
     // búsqueda
     private JLabel etiquetaEstado;
 
@@ -61,6 +79,7 @@ public class Vista extends JFrame {
     DefaultTableModel dtmTiendas;
     DefaultTableModel dtmMarcas;
     DefaultTableModel dtmCalzados;
+    DefaultTableModel dtmPedidos;
 
     // menubar
     JMenuItem itemOpciones;
@@ -161,6 +180,11 @@ public class Vista extends JFrame {
             comboTipoCalzado.addItem(constant.getValor());
         }
         comboTipoCalzado.setSelectedIndex(-1);
+
+        for (TipoEnvio constant : TipoEnvio.values()) {
+            comboTipoEnvio.addItem(constant.getValor());
+        }
+        comboTipoEnvio.setSelectedIndex(-1);
     }
 
     private void setTableModels() {
@@ -172,6 +196,9 @@ public class Vista extends JFrame {
 
         dtmTiendas = new DefaultTableModel();
         tiendasTabla.setModel(dtmTiendas);
+
+        dtmPedidos = new DefaultTableModel();
+        pedidosTabla.setModel(dtmCalzados);
     }
 
     public void mostrarDialogDesconectado() {

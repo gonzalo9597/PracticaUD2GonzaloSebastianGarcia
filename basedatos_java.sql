@@ -31,6 +31,22 @@ alter table calzados
 add foreign key (idtienda) references tiendas(idtienda),
 add foreign key (idmarca) references marcas(idmarca);
 --
+CREATE TABLE IF NOT EXISTS pedidos (
+idpedido int auto_increment primary key,
+codigoseguimiento varchar(50) not null UNIQUE,
+idcalzado int not null,
+idtienda int not null,
+idmarca int not null,
+cantidad int not null,
+nombredestinatario varchar(100) not null,
+tipoenvio varchar(50) not null,
+direccion varchar(100));
+--
+alter table pedidos
+add foreign key (idcalzado) references calzados(idcalzado),
+add foreign key (idtienda) references tiendas(idtienda),
+add foreign key (idmarca) references marcas(idmarca);
+--
 create function existeCodigoSKU(f_codigosku varchar(40))
 returns bit
 begin
@@ -74,6 +90,22 @@ begin
 	set i=i+1;
 	end while;
 	return 0;
-end; 
+end;
+--
+create function existeCodigoSeguimiento(f_codigoseguimiento varchar(50))
+    returns bit
+begin
+    declare i int;
+    set i=0;
+    while (i<(select max(idpedido) from pedidos)) do
+            if ((select codigoseguimiento from pedidos
+                 where idpedido=(i+1)) like f_codigoseguimiento)
+            then return 1;
+            end if;
+            set i=i+1;
+        end while;
+    return 0;
+end;
+--
 
 

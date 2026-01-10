@@ -31,6 +31,22 @@ alter table calzados
 add foreign key (idtienda) references tiendas(idtienda),
 add foreign key (idmarca) references marcas(idmarca);
 --
+CREATE TABLE IF NOT EXISTS pedidos (
+idpedido int auto_increment primary key,
+codigoseguimiento varchar(50) not null UNIQUE,
+idcalzado int not null,
+idtienda int not null,
+idmarca int not null,
+cantidad int not null,
+nombredestinatario varchar(100) not null,
+tipoenvio varchar(50) not null,
+direccion varchar(100));
+--
+alter table pedidos
+add foreign key (idcalzado) references calzados(idcalzado),
+add foreign key (idtienda) references tiendas(idtienda),
+add foreign key (idmarca) references marcas(idmarca);
+--
 delimiter ||
 create function existeCodigoSKU(f_codigosku varchar(40))
 returns bit

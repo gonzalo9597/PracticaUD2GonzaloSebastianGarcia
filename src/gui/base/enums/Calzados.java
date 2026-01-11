@@ -7,7 +7,8 @@ public enum Calzados {
         PLATAFORMA("Plataforma"),
         ESTAR_POR_CASA("Estar por casa");
 
-        private String valor;
+        private final String valor;
+        //final porque va a ser un valor inmutable
 
         Calzados(String valor) {this.valor = valor;}
 

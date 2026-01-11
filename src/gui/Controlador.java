@@ -584,6 +584,7 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
         try {
             vista.tiendasTabla.setModel(construirTableModelTiendas(modelo.consultarTienda()));
             vista.comboTienda.removeAllItems();
+            vista.comboPedidoTienda.removeAllItems();
             for(int i = 0; i < vista.dtmTiendas.getRowCount(); i++) {
                 vista.comboTienda.addItem(vista.dtmTiendas.getValueAt(i, 0)+" - "+
                         vista.dtmTiendas.getValueAt(i, 1));
@@ -621,6 +622,7 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
         try {
             vista.marcasTabla.setModel(construirTableModelMarcas(modelo.consultarMarca()));
             vista.comboMarca.removeAllItems();
+            vista.comboPedidoMarca.removeAllItems();
             for(int i = 0; i < vista.dtmMarcas.getRowCount(); i++) {
                 vista.comboMarca.addItem(vista.dtmMarcas.getValueAt(i, 0)+" - "+
                         vista.dtmMarcas.getValueAt(i, 2)+", "+vista.dtmMarcas.getValueAt(i, 1));

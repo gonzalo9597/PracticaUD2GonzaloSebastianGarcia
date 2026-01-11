@@ -22,7 +22,7 @@ idcalzado int auto_increment primary key,
 modelo varchar(50) not null,
 codigosku varchar(40) not null UNIQUE,
 idtienda int not null,
-tipotienda varchar(30),
+tipocalzado varchar(30),
 idmarca int not null,
 precio float not null,
 fechadelanzamiento date);

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="gui.Vista">
   <grid id="27dc6" binding="panel1" default-binding="true" layout-manager="FormLayout">
-    <rowspec value="center:475px:noGrow"/>
-    <colspec value="fill:852px:noGrow"/>
+    <rowspec value="center:439px:noGrow"/>
+    <colspec value="center:1140px:noGrow"/>
     <constraints>
-      <xy x="20" y="20" width="852" height="509"/>
+      <xy x="20" y="20" width="1207" height="570"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -16,7 +16,9 @@
           </grid>
           <forms defaultalign-vert="false"/>
         </constraints>
-        <properties/>
+        <properties>
+          <preferredSize width="1300" height="469"/>
+        </properties>
         <border type="none"/>
         <children>
           <grid id="542a" binding="JPanelCalzado" layout-manager="FormLayout">
@@ -49,7 +51,10 @@
             <constraints>
               <tabbedpane title="Calzado"/>
             </constraints>
-            <properties/>
+            <properties>
+              <minimumSize width="1300" height="411"/>
+              <preferredSize width="1300" height="411"/>
+            </properties>
             <border type="none"/>
             <children>
               <component id="b0fa3" class="javax.swing.JLabel">

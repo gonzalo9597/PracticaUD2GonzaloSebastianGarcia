@@ -6,7 +6,8 @@ public enum TiposTiendas {
     OUTLET("Outlet"),
     MULTIMARCA("Multimarca");
 
-    private String valor;
+    private final String valor;
+    //final porque va a ser un valor inmutable
 
     TiposTiendas(String valor) {
 

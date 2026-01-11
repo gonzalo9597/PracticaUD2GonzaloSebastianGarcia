@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="PracticaUD2-GonzaloSebastianGarcia:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/PracticaUD2_GonzaloSebastianGarcia_jar</output-path>
+    <root id="archive" name="PracticaUD2-GonzaloSebastianGarcia.jar">
+      <element id="module-output" name="PracticaUD2-GonzaloSebastianGarcia" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/Libs/LGoodDatePicker-8.3.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/Libs/flatlaf-3.4.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/Libs/mysql-connector-java-5.1.44-bin.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/Libs/jgoodies-forms-1.8.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/Libs/jgoodies-common-1.8.1.jar" path-in-jar="/" />
+      <element id="dir-copy" path="$PROJECT_DIR$/resources" />
+    </root>
+  </artifact>
+</component>

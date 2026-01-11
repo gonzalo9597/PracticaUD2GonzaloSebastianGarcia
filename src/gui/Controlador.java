@@ -25,16 +25,24 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
     public Controlador(Modelo modelo, Vista vista) {
         this.modelo = modelo;
         this.vista = vista;
-        conectado = true; // al inicio estamos conectados
+        conectado = true;
+        //Arranca la app estando conectados
         darkMode = false;
+        //Apagamos el darkMode de forma predeterminada
         modelo.conectar();
         setOptions();
-
         addActionListeners(this);
         addItemListeners(this);
         addWindowListeners(this);
         refrescarTodo();
         iniciar();
+        //Orden del Controlador:
+        //1. Guarda referencias a Modelo y Vista
+        //2. Se conecta a BD
+        //3. Rellena el OptionDialog con config (IP/usuario/pass/admin)
+        //4. Registra todos los botones/menus para escuchar clicks (listeners)
+        //5. Carga todo de BD y pinta tablas y combos (refrescarTodo())
+        //6. Activa listeners de selección de filas (iniciar())
     }
 
     private void refrescarTodo() {
@@ -43,9 +51,16 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
         refrescarCalzados();
         refrescarPedidos();
         refrescar = false;
+        //Al terminar de refrescar todo, convertimos a false para volver al comportamiento normal
+        //Cada refrescar hace:
+        //1. Consulta al modelo (ResultSet)
+        //2. Construye un DefaultTableModel
+        //3. Se lo pone a la JTable
+        //4. Rellena combos asociados
     }
 
     private void addActionListeners(ActionListener listener) {
+        //Declaramos los listener y acciones de los botones
         vista.btnCalzadosAnadir.addActionListener(listener);
         vista.btnCalzadosAnadir.setActionCommand("anadirCalzado");
         vista.btnMarcasAnadir.addActionListener(listener);
@@ -83,7 +98,6 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
         vista.itemOpciones.addActionListener(listener);
         vista.itemSalir.addActionListener(listener);
         vista.itemDesconectar.addActionListener(listener);
-        // --- Botón validar admin ---
         vista.btnValidate.addActionListener(listener);
         vista.itemDarkMode.addActionListener(listener);
     }
@@ -91,23 +105,31 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
     private void addWindowListeners(WindowListener listener) {
         vista.addWindowListener(listener);
     }
-
+    //Al hacer clic en una fila, el formulario se carga con los datos y así puedes modificar o eliminar
     void iniciar(){
         vista.tiendasTabla.setCellSelectionEnabled(true);
+        //Esto hace que el usuario pueda seleccionar celdas (no solo filas completas)
         ListSelectionModel cellSelectionModel =  vista.tiendasTabla.getSelectionModel();
+        //Obtenemos el “modelo de seleccion de la tabla
         cellSelectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        //Con esto, el usuario solo puede seleccionar una fila/celda a la vez
 
+        //Añadimos listener de la fila/celda
         cellSelectionModel.addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent e) {
+                //Evitamos que se dispare dos veces por el mismo clic
                 if (!e.getValueIsAdjusting()
                         && !((ListSelectionModel) e.getSource()).isSelectionEmpty()) {
+                    //Confirmamos que el evento viene de la tabla tiendas
                     if (e.getSource().equals(vista.tiendasTabla.getSelectionModel())) {
+                        //Obtenemos la fila seleccionada y rellenamos el formulario
                         int row = vista.tiendasTabla.getSelectedRow();
                         vista.txtNombreTienda.setText(String.valueOf(vista.tiendasTabla.getValueAt(row, 1)));
                         vista.txtEmail.setText(String.valueOf(vista.tiendasTabla.getValueAt(row, 2)));
                         vista.txtTelefono.setText(String.valueOf(vista.tiendasTabla.getValueAt(row, 3)));
                         vista.comboTipoTienda.setSelectedItem(String.valueOf(vista.tiendasTabla.getValueAt(row, 4)));
                         vista.txtWeb.setText(String.valueOf(vista.tiendasTabla.getValueAt(row, 5)));
+                        //Limpiamos campos cuando no hay seleccion
                     } else if (e.getValueIsAdjusting()
                             && ((ListSelectionModel) e.getSource()).isSelectionEmpty() && !refrescar) {
                         if (e.getSource().equals(vista.tiendasTabla.getSelectionModel())) {
@@ -204,6 +226,8 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
                         vista.spinnerCantidad.setValue(((Number) vista.pedidosTabla.getValueAt(row, 5)).intValue());
                         vista.txtNombreDestinatario.setText(String.valueOf(vista.pedidosTabla.getValueAt(row, 6)));
                         String tipoStr = String.valueOf(vista.pedidosTabla.getValueAt(row, 7));
+                        //Convertimos el String en enum, fromValor recorre los enums y compara el texto (valor)
+                        //Si el String clicado es enum DOMICILIO  hace que el rbt de Domicilio se clique
                         TipoEnvio tipo = TipoEnvio.fromValor(tipoStr);
                         switch (tipo) {
                             case DOMICILIO:
@@ -304,15 +328,21 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
                 vista.adminPasswordDialog.setVisible(true);
                 break;
             case "Desconectar":
-            case "Conectar": // para el botón del popup
+            case "Conectar":
+                //Si estamos conectados, desconectamos, aparece el popUp, bloqueamos panel principal
+                //cambiamos txt a "Desconectar" y conectado = false
                 if (conectado) {
                     desconectar();
+
+                    //Si estamos desconectados, nos conectamos, desaparece popUp, desbloqueamos panel
+                    //cambiamos txt a "Conectar" y conectado = true
                 } else {
                     conectar();
                 }
                 break;
             case "Dark Mode":
                 try {
+                    //Primero cambiamos el estado de darkMode (si era true a false y sino al reves)
                     darkMode = !darkMode;
 
                     if (darkMode) {
@@ -322,7 +352,7 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
                         UIManager.setLookAndFeel(new FlatMacLightLaf());
                         vista.itemDarkMode.setText("Dark Mode");
                     }
-
+                    //Actualizamos toda la vista
                     SwingUtilities.updateComponentTreeUI(vista);
                     vista.pack();
 
@@ -583,11 +613,15 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
     private void refrescarTienda() {
         try {
             vista.tiendasTabla.setModel(construirTableModelTiendas(modelo.consultarTienda()));
+            //Consulta al modelo (ResultSet) y construye un DefaultTableModel
             vista.comboTienda.removeAllItems();
+            //Primero borra todos los items para luego volver a escribir todos actualizados, sino se duplicarian
             vista.comboPedidoTienda.removeAllItems();
+            //Hacemos los mismo con comboPedidoTienda porque tambien usamos este JComboBox para pedidos
             for(int i = 0; i < vista.dtmTiendas.getRowCount(); i++) {
                 vista.comboTienda.addItem(vista.dtmTiendas.getValueAt(i, 0)+" - "+
                         vista.dtmTiendas.getValueAt(i, 1));
+                //Se lo pone a la JTable y rellena combos asociados con idtienda (columna 0) - nombretienda (columna 1)
                 vista.comboPedidoTienda.addItem(vista.dtmTiendas.getValueAt(i, 0)+" - "+
                         vista.dtmTiendas.getValueAt(i, 1));
             }
@@ -803,7 +837,7 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
 
     private boolean comprobarPedidoVacio() {
 
-        // Campos siempre obligatorios
+        //Campos siempre obligatorios
         if (vista.txtCodigoSeguimiento.getText().isEmpty() ||
                 vista.comboCalzado.getSelectedIndex() == -1 ||
                 vista.comboPedidoMarca.getSelectedIndex() == -1 ||
@@ -815,21 +849,25 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
             return true;
         }
 
-        // Dirección solo obligatoria si es DOMICILIO
+        //Direccion es solo obligatoria si es DOMICILIO, con esto obtenemos el botón seleccionado (como texto)
         String tipoEnvioStr = vista.buttonGroup1.getSelection().getActionCommand();
         TipoEnvio tipo = TipoEnvio.fromValor(tipoEnvioStr);
-
+        //Convertimos el String a enum y si es DOMICILIO, observa el texto sin espacios al principio ni final
+        //isEmpty() devuelve true si esta vacio
         if (tipo == TipoEnvio.DOMICILIO) {
             return vista.txtDireccion.getText().trim().isEmpty();
         }
-
         // Para TIENDA y PUNTO_DE_RECOGIDA no se exige dirección
+
+        //Si todos estos campos obligatorios no estan vacios, entonces devuelve false
         return false;
     }
 
     private String construirDireccionParaPedido(String tipoEnvioStr) {
         if (tipoEnvioStr == null) return "";
 
+        //fromValor convierte un String como "Domicilio" en el valor del enum correspondiente,
+        //por ejemplo TipoEnvio.DOMICILIO
         TipoEnvio tipo = TipoEnvio.fromValor(tipoEnvioStr);
 
         switch (tipo) {

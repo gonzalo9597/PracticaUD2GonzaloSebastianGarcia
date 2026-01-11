@@ -48,6 +48,7 @@ add foreign key (idtienda) references tiendas(idtienda),
 add foreign key (idmarca) references marcas(idmarca);
 --
 DROP FUNCTION IF EXISTS existeCodigoSKU;
+delimiter ||
 create function existeCodigoSKU(f_codigosku varchar(40))
 returns bit
 begin
@@ -61,9 +62,11 @@ begin
 	set i=i+1;
 	end while;
 	return 0;
-end; 
+end; ||
+delimiter ;
 --
 DROP FUNCTION IF EXISTS existeNombreTienda;
+delimiter ||
 create function existeNombreTienda (f_name varchar(50))
 returns bit
 begin
@@ -77,9 +80,11 @@ begin
 	set i=i+1;
 	end while;
 	return 0;
-end; 
+end; ||
+delimiter ;
 --
 DROP FUNCTION IF EXISTS existeNombreMarca;
+delimiter ||
 create function existeNombreMarca (f_name varchar(50))
 returns bit
 begin
@@ -93,9 +98,11 @@ begin
 	set i=i+1;
 	end while;
 	return 0;
-end;
+end; ||
+delimiter ;
 --
 DROP FUNCTION IF EXISTS existeCodigoSeguimiento;
+delimiter ||
 create function existeCodigoSeguimiento(f_codigoseguimiento varchar(50))
     returns bit
 begin
@@ -109,6 +116,5 @@ begin
             set i=i+1;
         end while;
     return 0;
-end;
-
-
+end; ||
+delimiter ;

@@ -17,10 +17,10 @@ public class Vista extends JFrame {
     private JPanel panel1;
     private final static String TITULO_FRAME = "Aplicación calzados";
 
-    // diálogo desconectado
+    //Dialogo desconectado
     JDialog dialogDesconectado;
 
-    // calzados
+    //Calzados
     JPanel JPanelCalzado;
     JTextField txtModelo;
     JComboBox comboMarca;
@@ -35,7 +35,7 @@ public class Vista extends JFrame {
     JButton btnCalzadosBorrarCampos;
     JTable calzadosTabla;
 
-    // marcas
+    //Marcas
     JPanel JPanelMarca;
     JTextField txtNombreMarca;
     JTextField txtNombreLegalEmpresa;
@@ -47,7 +47,7 @@ public class Vista extends JFrame {
     JButton btnMarcasBorrarCampos;
     JTable marcasTabla;
 
-    // tiendas
+    //Tiendas
     JPanel JPanelTienda;
     JTextField txtNombreTienda;
     JTextField txtEmail;
@@ -60,7 +60,7 @@ public class Vista extends JFrame {
     JButton btnTiendasBorrarCampos;
     JTable tiendasTabla;
 
-    // pedidos
+    //Pedidos
     JPanel JPanelPedido;
     JTextField txtCodigoSeguimiento;
     JComboBox comboCalzado;
@@ -80,22 +80,22 @@ public class Vista extends JFrame {
     JButton btnPedidosBorrarCampos;
     JTable pedidosTabla;
 
-    //busqueda
+    //Busqueda
     private JLabel etiquetaEstado;
 
-    // default table model
+    //Default table model
     DefaultTableModel dtmTiendas;
     DefaultTableModel dtmMarcas;
     DefaultTableModel dtmCalzados;
     DefaultTableModel dtmPedidos;
 
-    // menubar
+    //Menubar
     JMenuItem itemOpciones;
     JMenuItem itemDesconectar;
     JMenuItem itemDarkMode;
     JMenuItem itemSalir;
 
-    // cuadro diálogo OptionDialog
+    //Cuadro diálogo OptionDialog
     OptionDialog optionDialog;
     JDialog adminPasswordDialog;
     JButton btnValidate;
@@ -107,19 +107,17 @@ public class Vista extends JFrame {
     }
 
     private void initRadioButtons() {
-        // Si buttonGroup1 ya viene creado por el GUI Builder, NO lo machaques.
-        // Solo asegúrate de que contiene los radios y que tienen actionCommand.
-
+        //Nos aseguramos de que está creado el buttongroup1 y sino lo creamos
         if (buttonGroup1 == null) {
             buttonGroup1 = new ButtonGroup();
         }
 
-        // Añadir (por si acaso no estaban metidos en el group desde el .form)
+        //Añadimos los jrb al grupo
         buttonGroup1.add(jrbDomicilio);
         buttonGroup1.add(jrbTienda);
         buttonGroup1.add(jrbPuntoDeRecogida);
 
-        // Action commands (esto es lo importante para tu getSelection().getActionCommand())
+        //Action commands de los jrb(importante para getSelection().getActionCommand())
         jrbDomicilio.setActionCommand(TipoEnvio.DOMICILIO.getValor());
         jrbTienda.setActionCommand(TipoEnvio.TIENDA.getValor());
         jrbPuntoDeRecogida.setActionCommand(TipoEnvio.PUNTO_DE_RECOGIDA.getValor());
@@ -135,17 +133,18 @@ public class Vista extends JFrame {
         jrbTienda.addActionListener(al);
         jrbPuntoDeRecogida.addActionListener(al);
         actualizarVisibilidadDireccion();
+        //Añadimos el metodo para mostrar u ocultar el txt de direccion
     }
 
     public void initFrame() {
         this.setContentPane(panel1);
         this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        // ICONO DEL FRAME
+        //ICONO DEL FRAME
         this.setIconImage(
                 new ImageIcon(getClass().getResource("/jordan.png")).getImage()
         );
-        // Lo colocamos donde el Frame ya existe, pero todavía no es visible (después de configurar el frame básico)
-        // Para que coja la imagen cuando creemos el JAR (la imagen tiene que ir en resources)
+        //Lo colocamos donde el Frame ya existe, pero todavía no es visible (después de configurar el frame básico)
+        //Para que coja la imagen cuando creemos el JAR (la imagen tiene que ir en resources)
         this.pack();
         this.setSize(new Dimension(this.getWidth() + 100, this.getHeight()));
         this.setVisible(true);
@@ -198,12 +197,13 @@ public class Vista extends JFrame {
     }
 
     public void crearDialogDesconectado() {
-        dialogDesconectado = new JDialog(this, "Desconectado", false); // modal
+        dialogDesconectado = new JDialog(this, "Desconectado", false);
+        //No modal (false), por lo que podemos cerrar la ventana
         dialogDesconectado.setSize(300, 150);
         dialogDesconectado.setLocationRelativeTo(this);
         dialogDesconectado.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
-        JLabel lblMensaje = new JLabel("Estás desconectado :(", SwingConstants.CENTER);
+        JLabel lblMensaje = new JLabel("¡Estás desconectado!", SwingConstants.CENTER);
         lblMensaje.setFont(new Font("Arial", Font.BOLD, 14));
 
         dialogDesconectado.setLayout(new BorderLayout());
@@ -222,20 +222,23 @@ public class Vista extends JFrame {
         comboTipoCalzado.setSelectedIndex(-1);
     }
     private void initSpinnerCantidad() {
+        //Damos valores predeterminados al spinner
         spinnerCantidad.setModel(new SpinnerNumberModel(1, 1, 10, 1));
     }
 
     private void actualizarVisibilidadDireccion() {
         boolean esDomicilio = jrbDomicilio.isSelected();
-
+        //Dependiendo de si esta seleccionado o no, la visibilidad sera true o false
         txtDireccion.setVisible(esDomicilio);
         lblDireccion.setVisible(esDomicilio);
 
         if (!esDomicilio) {
-            txtDireccion.setText(""); // para que no se quede texto viejo
+            txtDireccion.setText("");
+            //Si Domicilio esta seleccionado y luego deja de estarlo, el valor del txt direccion pasa a ser ""
+            //para que no se quede texto viejo
         }
     }
-
+    //Insertamos las tablas de la bbdd en el panel de los distintos paneles de la vista
     private void setTableModels() {
         dtmCalzados = new DefaultTableModel();
         calzadosTabla.setModel(dtmCalzados);
@@ -266,6 +269,8 @@ public class Vista extends JFrame {
         setEnabledRecursivo(panel1, true);
     }
 
+    //Con esto podemos activar o desactivar (enabled/disabled) todos los componentes de un panel,
+    //incluidos los que estan dentro de otros paneles, por el Container
     private void setEnabledRecursivo(Container container, boolean enabled) {
         for (Component c : container.getComponents()) {
             c.setEnabled(enabled);

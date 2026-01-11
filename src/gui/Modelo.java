@@ -1,5 +1,7 @@
 package gui;
 
+import main.Principal;
+
 import java.io.*;
 import java.sql.*;
 import java.time.LocalDate;
@@ -13,6 +15,8 @@ public class Modelo {
 
     public Modelo() {
         getPropValues();
+        //Llamamos para lee el fichero config.properties y guarda ip, user, password y adminPassword
+        //El Modelo ya sabe donde esta la bbdd y con que usuario conectar
     }
 
     public String getIp() {
@@ -31,7 +35,8 @@ public class Modelo {
     private Connection conexion;
 
     void conectar() {
-
+    //El modelo intenta conectarse a la bbbdd mibasegonzalo. Si no puede, lee el archivo basedatos_java.sql
+    // con leerFichero(), parte el contenido en con -- y ejecuta cada trozo como SQL con PreparedStatement
         try {
             conexion = DriverManager.getConnection(
                     "jdbc:mysql://"+ip+":3306/mibasegonzalo",user, password);
@@ -58,15 +63,21 @@ public class Modelo {
     }
 
     private String leerFichero() throws IOException {
-        BufferedReader reader = new BufferedReader(new FileReader("basedatos_java.sql")) ;
-            String linea;
+        try (InputStream input = Principal.class.getResourceAsStream("/basedatos_java.sql")) {
+            if (input == null) {
+                throw new IOException("No se encontró el archivo basedatos_java.sql");
+            }
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(input));
             StringBuilder stringBuilder = new StringBuilder();
+            String linea;
             while ((linea = reader.readLine()) != null) {
                 stringBuilder.append(linea);
                 stringBuilder.append(" ");
             }
 
             return stringBuilder.toString();
+        }
     }
 
     public void desconectar() {
@@ -76,7 +87,8 @@ public class Modelo {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-            conexion = null; // para no volver a cerrar
+            conexion = null;
+            //Para no volver a entrar en el bucle si ya esta cerrada
         }
     }
 
@@ -384,6 +396,7 @@ public class Modelo {
                 }
         }
     }
+    //Aqui cambiamos al nombre de los campos les asignamos un label para que se vean en las columnas de la vista
     ResultSet consultarTienda() throws SQLException {
         String sentenciaSql = "SELECT idtienda as 'ID', " +
                 "nombretienda as 'Nombre tienda', " +
@@ -454,31 +467,28 @@ public class Modelo {
         resultado = sentencia.executeQuery();
         return resultado;
     }
+    //Lee el fichero y sus valores ip, user, password y adminPassword
     private void getPropValues() {
-        InputStream inputStream = null;
-        try {
+        try (InputStream inputStream = Principal.class.getResourceAsStream("/config.properties")) {
+            if (inputStream == null) {
+                System.out.println("No se encontró el archivo config.properties");
+                return;
+            }
+
             Properties prop = new Properties();
-            String propFileName = "config.properties";
-
-            inputStream = new FileInputStream(propFileName);
-
             prop.load(inputStream);
+
             ip = prop.getProperty("ip");
             user = prop.getProperty("user");
             password = prop.getProperty("pass");
             adminPassword = prop.getProperty("admin");
 
-        } catch (Exception e) {
-            System.out.println("Exception: " + e);
-        } finally {
-            try {
-                if (inputStream != null) inputStream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
-
+    //Reescribe el fichero y sus valores por los nuevos que el usuario ha asignado. Por eso al guardar opciones
+    //reiniciamos la app para que vuelva a cargar la config
     void setPropValues(String ip, String user, String pass, String adminPass) {
         try {
             Properties prop = new Properties();
@@ -502,13 +512,18 @@ public class Modelo {
         String salesConsult = "SELECT existeCodigoSKU(?)";
         PreparedStatement function;
         boolean codigoSKUExists = false;
+        //Si la conexion falla, codigoSKUExists es iniciado como false entonces el metodo da false
         try {
             function = conexion.prepareStatement(salesConsult);
             function.setString(1, codigoSKU);
+            //El 1 es el primer parámetro
             ResultSet rs = function.executeQuery();
+            //ResultSet contiene una fila con una columna (el resultado 0/1)
             rs.next();
+            //Con rs.next leemos el valor
 
             codigoSKUExists = rs.getBoolean(1);
+            //Si la funcion devuelve 1, codigoSKUExists es true y si devuelve 0 false. El 1 es la columna
         } catch (SQLException e) {
             e.printStackTrace();
         }

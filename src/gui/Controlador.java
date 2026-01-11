@@ -2,6 +2,7 @@ package gui;
 
 import com.formdev.flatlaf.themes.FlatMacDarkLaf;
 import com.formdev.flatlaf.themes.FlatMacLightLaf;
+import gui.base.enums.TipoEnvio;
 import util.Util;
 
 import javax.swing.*;
@@ -40,6 +41,7 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
         refrescarMarcas();
         refrescarTienda();
         refrescarCalzados();
+        refrescarPedidos();
         refrescar = false;
     }
 
@@ -50,18 +52,32 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
         vista.btnMarcasAnadir.setActionCommand("anadirMarca");
         vista.btnTiendasAnadir.addActionListener(listener);
         vista.btnTiendasAnadir.setActionCommand("anadirTienda");
+        vista.btnPedidosAnadir.addActionListener(listener);
+        vista.btnPedidosAnadir.setActionCommand("anadirPedido");
         vista.btnCalzadosEliminar.addActionListener(listener);
         vista.btnCalzadosEliminar.setActionCommand("eliminarCalzado");
         vista.btnMarcasEliminar.addActionListener(listener);
         vista.btnMarcasEliminar.setActionCommand("eliminarMarca");
         vista.btnTiendasEliminar.addActionListener(listener);
         vista.btnTiendasEliminar.setActionCommand("eliminarTienda");
+        vista.btnPedidosEliminar.addActionListener(listener);
+        vista.btnPedidosEliminar.setActionCommand("eliminarPedido");
         vista.btnCalzadosModificar.addActionListener(listener);
         vista.btnCalzadosModificar.setActionCommand("modificarCalzado");
         vista.btnMarcasModificar.addActionListener(listener);
         vista.btnMarcasModificar.setActionCommand("modificarMarca");
         vista.btnTiendasModificar.addActionListener(listener);
         vista.btnTiendasModificar.setActionCommand("modificarTienda");
+        vista.btnPedidosModificar.addActionListener(listener);
+        vista.btnPedidosModificar.setActionCommand("modificarPedido");
+        vista.btnCalzadosBorrarCampos.addActionListener(listener);
+        vista.btnCalzadosBorrarCampos.setActionCommand("borrarCamposCalzado");
+        vista.btnMarcasBorrarCampos.addActionListener(listener);
+        vista.btnMarcasBorrarCampos.setActionCommand("borrarCamposMarca");
+        vista.btnTiendasBorrarCampos.addActionListener(listener);
+        vista.btnTiendasBorrarCampos.setActionCommand("borrarCamposTienda");
+        vista.btnPedidosBorrarCampos.addActionListener(listener);
+        vista.btnPedidosBorrarCampos.setActionCommand("borrarCamposPedido");
         vista.optionDialog.btnOpcionesGuardar.addActionListener(listener);
         vista.optionDialog.btnOpcionesGuardar.setActionCommand("guardarOpciones");
         vista.itemOpciones.addActionListener(listener);
@@ -100,6 +116,8 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
                             borrarCamposMarcas();
                         } else if (e.getSource().equals(vista.calzadosTabla.getSelectionModel())) {
                             borrarCamposCalzados();
+                        } else if (e.getSource().equals(vista.pedidosTabla.getSelectionModel())) {
+                            borrarCamposPedidos();
                         }
                     }
                 }
@@ -128,6 +146,8 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
                             borrarCamposMarcas();
                         } else if (e.getSource().equals(vista.calzadosTabla.getSelectionModel())) {
                             borrarCamposCalzados();
+                        } else if (e.getSource().equals(vista.pedidosTabla.getSelectionModel())) {
+                            borrarCamposPedidos();
                         }
                     }
                 }
@@ -159,6 +179,54 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
                             borrarCamposMarcas();
                         } else if (e.getSource().equals(vista.calzadosTabla.getSelectionModel())) {
                             borrarCamposCalzados();
+                        } else if (e.getSource().equals(vista.pedidosTabla.getSelectionModel())) {
+                            borrarCamposPedidos();
+                        }
+                    }
+                }
+            }
+        });
+        vista.pedidosTabla.setCellSelectionEnabled(true);
+        ListSelectionModel cellSelectionModel4 =  vista.pedidosTabla.getSelectionModel();
+        cellSelectionModel4.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        cellSelectionModel4.addListSelectionListener(new ListSelectionListener() {
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()
+                        && !((ListSelectionModel) e.getSource()).isSelectionEmpty()) {
+                    if (e.getSource().equals(vista.pedidosTabla.getSelectionModel())) {
+                        int row = vista.pedidosTabla.getSelectedRow();
+
+                        vista.txtCodigoSeguimiento.setText(String.valueOf(vista.pedidosTabla.getValueAt(row, 1)));
+                        vista.comboCalzado.setSelectedItem(String.valueOf(vista.pedidosTabla.getValueAt(row, 2)));
+                        vista.comboPedidoTienda.setSelectedItem(String.valueOf(vista.pedidosTabla.getValueAt(row, 3)));
+                        vista.comboPedidoMarca.setSelectedItem(String.valueOf(vista.pedidosTabla.getValueAt(row, 4)));
+                        vista.spinnerCantidad.setValue(((Number) vista.pedidosTabla.getValueAt(row, 5)).intValue());
+                        vista.txtNombreDestinatario.setText(String.valueOf(vista.pedidosTabla.getValueAt(row, 6)));
+                        String tipoStr = String.valueOf(vista.pedidosTabla.getValueAt(row, 7));
+                        TipoEnvio tipo = TipoEnvio.fromValor(tipoStr);
+                        switch (tipo) {
+                            case DOMICILIO:
+                                vista.jrbDomicilio.setSelected(true);
+                                break;
+                            case TIENDA:
+                                vista.jrbTienda.setSelected(true);
+                                break;
+                            case PUNTO_DE_RECOGIDA:
+                                vista.jrbPuntoDeRecogida.setSelected(true);
+                                break;
+                        }
+                        vista.txtDireccion.setText(String.valueOf(vista.pedidosTabla.getValueAt(row, 8)));
+                    } else if (e.getValueIsAdjusting()
+                            && ((ListSelectionModel) e.getSource()).isSelectionEmpty() && !refrescar) {
+                        if (e.getSource().equals(vista.tiendasTabla.getSelectionModel())) {
+                            borrarCamposTiendas();
+                        } else if (e.getSource().equals(vista.marcasTabla.getSelectionModel())) {
+                            borrarCamposMarcas();
+                        } else if (e.getSource().equals(vista.calzadosTabla.getSelectionModel())) {
+                            borrarCamposCalzados();
+                        } else if (e.getSource().equals(vista.pedidosTabla.getSelectionModel())) {
+                            borrarCamposPedidos();
                         }
                     }
                 }
@@ -191,6 +259,28 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
                 vista.fechaDeLanzamiento.setDate((Date.valueOf(String.valueOf(vista.calzadosTabla.getValueAt(row, 7)))).toLocalDate());
                 vista.txtCodigoSKU.setText(String.valueOf(vista.calzadosTabla.getValueAt(row, 2)));
                 vista.txtPrecioCalzado.setText(String.valueOf(vista.calzadosTabla.getValueAt(row, 6)));
+            } else if (e.getSource().equals(vista.pedidosTabla.getSelectionModel())) {
+                int row = vista.pedidosTabla.getSelectedRow();
+                vista.txtCodigoSeguimiento.setText(String.valueOf(vista.pedidosTabla.getValueAt(row, 1)));
+                vista.comboCalzado.setSelectedItem(String.valueOf(vista.pedidosTabla.getValueAt(row, 2)));
+                vista.comboPedidoTienda.setSelectedItem(String.valueOf(vista.pedidosTabla.getValueAt(row, 3)));
+                vista.comboPedidoMarca.setSelectedItem(String.valueOf(vista.pedidosTabla.getValueAt(row, 4)));
+                vista.spinnerCantidad.setValue(((Number) vista.pedidosTabla.getValueAt(row, 5)).intValue());
+                vista.txtNombreDestinatario.setText(String.valueOf(vista.pedidosTabla.getValueAt(row, 6)));
+                String tipoStr = String.valueOf(vista.pedidosTabla.getValueAt(row, 7));
+                TipoEnvio tipo = TipoEnvio.fromValor(tipoStr);
+                switch (tipo) {
+                    case DOMICILIO:
+                        vista.jrbDomicilio.setSelected(true);
+                        break;
+                    case TIENDA:
+                        vista.jrbTienda.setSelected(true);
+                        break;
+                    case PUNTO_DE_RECOGIDA:
+                        vista.jrbPuntoDeRecogida.setSelected(true);
+                        break;
+                }
+                vista.txtDireccion.setText(String.valueOf(vista.pedidosTabla.getValueAt(row, 8)));
             } else if (e.getValueIsAdjusting()
                     && ((ListSelectionModel) e.getSource()).isSelectionEmpty() && !refrescar) {
                 if (e.getSource().equals(vista.tiendasTabla.getSelectionModel())) {
@@ -199,6 +289,8 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
                     borrarCamposMarcas();
                 } else if (e.getSource().equals(vista.calzadosTabla.getSelectionModel())) {
                     borrarCamposCalzados();
+                } else if (e.getSource().equals(vista.pedidosTabla.getSelectionModel())) {
+                    borrarCamposPedidos();
                 }
             }
         }
@@ -312,6 +404,9 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
                 borrarCamposCalzados();
                 refrescarCalzados();
                 break;
+            case "borrarCamposCalzado":
+                borrarCamposCalzados();
+                break;
             case "anadirMarca": {
                 try {
                     if (comprobarMarcaVacia()) {
@@ -358,6 +453,9 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
                 borrarCamposMarcas();
                 refrescarMarcas();
                 break;
+            case "borrarCamposMarca":
+                borrarCamposMarcas();
+                break;
             case "anadirTienda": {
                 try {
                     if (comprobarTiendaVacia()) {
@@ -403,6 +501,77 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
                 borrarCamposTiendas();
                 refrescarTienda();
                 break;
+            case "borrarCamposTienda":
+                borrarCamposTiendas();
+                break;
+            case "anadirPedido": {
+                try {
+                    if (comprobarPedidoVacio()) {
+                        Util.showErrorAlert("Rellena todos los campos");
+                        vista.pedidosTabla.clearSelection();
+                    } else if (modelo.pedidoCodigoSeguimientoYaExiste(vista.txtCodigoSeguimiento.getText())) {
+                        Util.showErrorAlert("Ese código de seguimiento ya existe.\nIntroduce un pedido diferente");
+                        vista.pedidosTabla.clearSelection();
+                    } else {
+                        String tipoEnvio = vista.buttonGroup1.getSelection().getActionCommand();
+                        String direccion = construirDireccionParaPedido(tipoEnvio);
+
+                        modelo.insertarPedido(
+                                vista.txtCodigoSeguimiento.getText(),
+                                String.valueOf(vista.comboCalzado.getSelectedItem()),
+                                String.valueOf(vista.comboPedidoTienda.getSelectedItem()),
+                                String.valueOf(vista.comboPedidoMarca.getSelectedItem()),
+                                (Integer) vista.spinnerCantidad.getValue(),
+                                vista.txtNombreDestinatario.getText(),
+                                tipoEnvio,
+                                direccion
+                        );
+                    }
+                } catch (NumberFormatException nfe) {
+                    Util.showErrorAlert("Introduce números en los campos que lo requieren");
+                    vista.pedidosTabla.clearSelection();
+                }
+                borrarCamposPedidos();
+                refrescarPedidos();
+            }
+            break;
+            case "modificarPedido": {
+                try {
+                    if (comprobarPedidoVacio()) {
+                        Util.showErrorAlert("Rellena todos los campos");
+                        vista.pedidosTabla.clearSelection();
+                    } else {
+                        String tipoEnvio = vista.buttonGroup1.getSelection().getActionCommand();
+                        String direccion = construirDireccionParaPedido(tipoEnvio);
+
+                        modelo.modificarPedido(
+                                vista.txtCodigoSeguimiento.getText(),
+                                String.valueOf(vista.comboCalzado.getSelectedItem()),
+                                String.valueOf(vista.comboPedidoTienda.getSelectedItem()),
+                                String.valueOf(vista.comboPedidoMarca.getSelectedItem()),
+                                (Integer) vista.spinnerCantidad.getValue(),
+                                vista.txtNombreDestinatario.getText(),
+                                tipoEnvio,
+                                direccion,
+                                (Integer) vista.pedidosTabla.getValueAt(vista.pedidosTabla.getSelectedRow(), 0)
+                        );
+                    }
+                } catch (NumberFormatException nfe) {
+                    Util.showErrorAlert("Introduce números en los campos que lo requieren");
+                    vista.pedidosTabla.clearSelection();
+                }
+                borrarCamposPedidos();
+                refrescarPedidos();
+            }
+            break;
+            case "eliminarPedido":
+                modelo.eliminarPedido((Integer) vista.pedidosTabla.getValueAt(vista.pedidosTabla.getSelectedRow(), 0));
+                borrarCamposPedidos();
+                refrescarPedidos();
+                break;
+            case "borrarCamposPedido":
+                borrarCamposPedidos();
+                break;
         }
     }
 
@@ -417,6 +586,8 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
             vista.comboTienda.removeAllItems();
             for(int i = 0; i < vista.dtmTiendas.getRowCount(); i++) {
                 vista.comboTienda.addItem(vista.dtmTiendas.getValueAt(i, 0)+" - "+
+                        vista.dtmTiendas.getValueAt(i, 1));
+                vista.comboPedidoTienda.addItem(vista.dtmTiendas.getValueAt(i, 0)+" - "+
                         vista.dtmTiendas.getValueAt(i, 1));
             }
         } catch (SQLException e) {
@@ -453,6 +624,8 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
             for(int i = 0; i < vista.dtmMarcas.getRowCount(); i++) {
                 vista.comboMarca.addItem(vista.dtmMarcas.getValueAt(i, 0)+" - "+
                         vista.dtmMarcas.getValueAt(i, 2)+", "+vista.dtmMarcas.getValueAt(i, 1));
+                vista.comboPedidoMarca.addItem(vista.dtmMarcas.getValueAt(i, 0)+" - "+
+                        vista.dtmMarcas.getValueAt(i, 2)+", "+vista.dtmMarcas.getValueAt(i, 1));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -484,6 +657,11 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
     private void refrescarCalzados() {
         try {
             vista.calzadosTabla.setModel(construirTableModelCalzados(modelo.consultarCalzados()));
+            vista.comboCalzado.removeAllItems();
+            for(int i = 0; i < vista.dtmCalzados.getRowCount(); i++) {
+                vista.comboCalzado.addItem(vista.dtmCalzados.getValueAt(i, 0)+" - "+
+                        vista.dtmCalzados.getValueAt(i, 1));
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -508,6 +686,36 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
         vista.dtmCalzados.setDataVector(data, columnNames);
 
         return vista.dtmCalzados;
+
+    }
+
+    private void refrescarPedidos() {
+        try {
+            vista.pedidosTabla.setModel(construirTableModelPedidos(modelo.consultarPedidos()));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private DefaultTableModel construirTableModelPedidos(ResultSet rs)
+            throws SQLException {
+
+        ResultSetMetaData metaData = rs.getMetaData();
+
+        // names of columns
+        Vector<String> columnNames = new Vector<>();
+        int columnCount = metaData.getColumnCount();
+        for (int column = 1; column <= columnCount; column++) {
+            columnNames.add(metaData.getColumnLabel(column));
+        }
+
+        // data of the table
+        Vector<Vector<Object>> data = new Vector<>();
+        setDataVector(rs, columnCount, data);
+
+        vista.dtmPedidos.setDataVector(data, columnNames);
+
+        return vista.dtmPedidos;
 
     }
 
@@ -553,6 +761,19 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
         vista.txtWeb.setText("");
     }
 
+    private void borrarCamposPedidos() {
+        vista.txtCodigoSeguimiento.setText("");
+        vista.comboCalzado.setSelectedIndex(-1);
+        vista.comboPedidoTienda.setSelectedIndex(-1);
+        vista.comboPedidoMarca.setSelectedIndex(-1);
+        vista.spinnerCantidad.setValue(1);
+        vista.txtNombreDestinatario.setText("");
+        vista.buttonGroup1.clearSelection();
+        vista.txtDireccion.setText("");
+        vista.txtDireccion.setVisible(false);
+        vista.lblDireccion.setVisible(false);
+    }
+
     private boolean comprobarCalzadoVacio() {
         return vista.txtModelo.getText().isEmpty() ||
                 vista.txtPrecioCalzado.getText().isEmpty() ||
@@ -577,6 +798,50 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
                 vista.comboTipoTienda.getSelectedIndex() == -1 ||
                 vista.txtWeb.getText().isEmpty();
     }
+
+    private boolean comprobarPedidoVacio() {
+
+        // Campos siempre obligatorios
+        if (vista.txtCodigoSeguimiento.getText().isEmpty() ||
+                vista.comboCalzado.getSelectedIndex() == -1 ||
+                vista.comboPedidoMarca.getSelectedIndex() == -1 ||
+                vista.comboPedidoTienda.getSelectedIndex() == -1 ||
+                ((int) vista.spinnerCantidad.getValue()) < 1 ||
+                vista.txtNombreDestinatario.getText().isEmpty() ||
+                vista.buttonGroup1.getSelection() == null) {
+
+            return true;
+        }
+
+        // Dirección solo obligatoria si es DOMICILIO
+        String tipoEnvioStr = vista.buttonGroup1.getSelection().getActionCommand();
+        TipoEnvio tipo = TipoEnvio.fromValor(tipoEnvioStr);
+
+        if (tipo == TipoEnvio.DOMICILIO) {
+            return vista.txtDireccion.getText().trim().isEmpty();
+        }
+
+        // Para TIENDA y PUNTO_DE_RECOGIDA no se exige dirección
+        return false;
+    }
+
+    private String construirDireccionParaPedido(String tipoEnvioStr) {
+        if (tipoEnvioStr == null) return "";
+
+        TipoEnvio tipo = TipoEnvio.fromValor(tipoEnvioStr);
+
+        switch (tipo) {
+            case DOMICILIO:
+                return vista.txtDireccion.getText().trim();
+            case TIENDA:
+                return "Ubicacion tienda";
+            case PUNTO_DE_RECOGIDA:
+                return "Ubicacion punto de recogida";
+            default:
+                return "";
+        }
+    }
+
     private void desconectar() {
         modelo.desconectar();
         vista.bloquearVistaExceptoMenu();

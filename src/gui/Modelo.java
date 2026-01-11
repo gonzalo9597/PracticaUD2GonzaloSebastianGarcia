@@ -175,7 +175,7 @@ public class Modelo {
             sentencia.setInt(5, cantidad);
             sentencia.setString(6, nombreDestinatario);
             sentencia.setString(7, tipoEnvio);
-            sentencia.setString(7, direccion);
+            sentencia.setString(8, direccion);
             sentencia.executeUpdate();
         } catch (SQLException sqle) {
             sqle.printStackTrace();
@@ -419,7 +419,7 @@ public class Modelo {
                 "c.tipocalzado as 'Tipo calzado', " +
                 "concat(m.idmarca, ' - ', m.nombrelegalempresa, ', ', m.nombremarca) as 'Marca', " +
                 "c.precio as 'Precio', " +
-                "c.fechadelanzamiento as 'Fecha de lanzamiento'" +
+                "c.fechadelanzamiento as 'Fecha de lanzamiento' " +
                 "FROM calzados as c " +
                 "inner join tiendas as t " +
                 "on t.idtienda = c.idtienda " +
@@ -440,14 +440,14 @@ public class Modelo {
                 "p.cantidad as 'Cantidad', " +
                 "p.nombredestinatario as 'Nombre del destinatario', " +
                 "p.tipoenvio as 'Tipo de envío', " +
-                "p.direccion as 'Dirección', " +
+                "p.direccion as 'Dirección' " +
                 "FROM pedidos as p " +
                 "inner join calzados as c " +
                 "on c.idcalzado = p.idcalzado " +
                 "inner join tiendas as t " +
-                "on t.idtienda = c.idtienda " +
+                "on t.idtienda = p.idtienda " +
                 "inner join marcas as m " +
-                "on m.idmarca = c.idmarca";
+                "on m.idmarca = p.idmarca";
         PreparedStatement sentencia = null;
         ResultSet resultado = null;
         sentencia = conexion.prepareStatement(sentenciaSql);

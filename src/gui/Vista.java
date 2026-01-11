@@ -8,6 +8,8 @@ import gui.base.enums.TipoEnvio;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class Vista extends JFrame {
 
@@ -30,6 +32,7 @@ public class Vista extends JFrame {
     JButton btnCalzadosEliminar;
     JButton btnCalzadosModificar;
     JButton btnCalzadosAnadir;
+    JButton btnCalzadosBorrarCampos;
     JTable calzadosTabla;
 
     // marcas
@@ -41,6 +44,7 @@ public class Vista extends JFrame {
     JButton btnMarcasAnadir;
     JButton btnMarcasModificar;
     JButton btnMarcasEliminar;
+    JButton btnMarcasBorrarCampos;
     JTable marcasTabla;
 
     // tiendas
@@ -53,6 +57,7 @@ public class Vista extends JFrame {
     JButton btnTiendasAnadir;
     JButton btnTiendasModificar;
     JButton btnTiendasEliminar;
+    JButton btnTiendasBorrarCampos;
     JTable tiendasTabla;
 
     // pedidos
@@ -67,10 +72,12 @@ public class Vista extends JFrame {
     JRadioButton jrbDomicilio;
     JRadioButton jrbTienda;
     JRadioButton jrbPuntoDeRecogida;
+    JLabel lblDireccion;
     JTextField txtDireccion;
     JButton btnPedidosEliminar;
     JButton btnPedidosModificar;
     JButton btnPedidosAnadir;
+    JButton btnPedidosBorrarCampos;
     JTable pedidosTabla;
 
     //busqueda
@@ -99,6 +106,37 @@ public class Vista extends JFrame {
         initFrame();
     }
 
+    private void initRadioButtons() {
+        // Si buttonGroup1 ya viene creado por el GUI Builder, NO lo machaques.
+        // Solo asegúrate de que contiene los radios y que tienen actionCommand.
+
+        if (buttonGroup1 == null) {
+            buttonGroup1 = new ButtonGroup();
+        }
+
+        // Añadir (por si acaso no estaban metidos en el group desde el .form)
+        buttonGroup1.add(jrbDomicilio);
+        buttonGroup1.add(jrbTienda);
+        buttonGroup1.add(jrbPuntoDeRecogida);
+
+        // Action commands (esto es lo importante para tu getSelection().getActionCommand())
+        jrbDomicilio.setActionCommand(TipoEnvio.DOMICILIO.getValor());
+        jrbTienda.setActionCommand(TipoEnvio.TIENDA.getValor());
+        jrbPuntoDeRecogida.setActionCommand(TipoEnvio.PUNTO_DE_RECOGIDA.getValor());
+
+        ActionListener al = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                actualizarVisibilidadDireccion();
+            }
+        };
+
+        jrbDomicilio.addActionListener(al);
+        jrbTienda.addActionListener(al);
+        jrbPuntoDeRecogida.addActionListener(al);
+        actualizarVisibilidadDireccion();
+    }
+
     public void initFrame() {
         this.setContentPane(panel1);
         this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -107,7 +145,7 @@ public class Vista extends JFrame {
                 new ImageIcon(getClass().getResource("/jordan.png")).getImage()
         );
         // Lo colocamos donde el Frame ya existe, pero todavía no es visible (después de configurar el frame básico)
-        // Para que coja la imagen cuando creemos el JAR (la imagen tiene que ir en resources
+        // Para que coja la imagen cuando creemos el JAR (la imagen tiene que ir en resources)
         this.pack();
         this.setSize(new Dimension(this.getWidth() + 100, this.getHeight()));
         this.setVisible(true);
@@ -117,9 +155,10 @@ public class Vista extends JFrame {
         setMenu();
         setAdminDialog();
         setEnumComboBox();
-        //setTipoEnvioRadioButtons();
         setTableModels();
         crearDialogDesconectado();
+        initRadioButtons();
+        initSpinnerCantidad();
     }
 
     private void setMenu() {
@@ -171,7 +210,6 @@ public class Vista extends JFrame {
         dialogDesconectado.add(lblMensaje, BorderLayout.CENTER);
     }
 
-
     private void setEnumComboBox() {
         for (TiposTiendas constant : TiposTiendas.values()) {
             comboTipoTienda.addItem(constant.getValor());
@@ -182,38 +220,21 @@ public class Vista extends JFrame {
             comboTipoCalzado.addItem(constant.getValor());
         }
         comboTipoCalzado.setSelectedIndex(-1);
-
-        // Combos para pedidos
-      //  comboPedidoMarca = new JComboBox<>();
-      //  comboPedidoTienda = new JComboBox<>();
-
-      //  for (int i = 0; i < comboMarca.getItemCount(); i++) {
-           // comboPedidoMarca.addItem(comboMarca.getItemAt(i));
-      //  }
-
-        //for (int i = 0; i < comboTienda.getItemCount(); i++) {
-       //     comboPedidoTienda.addItem(comboTienda.getItemAt(i));
-     //   }
-
-       // JPanelPedido.add(comboPedidoMarca);
-       // JPanelPedido.add(comboPedidoTienda);
+    }
+    private void initSpinnerCantidad() {
+        spinnerCantidad.setModel(new SpinnerNumberModel(1, 1, 10, 1));
     }
 
-    //private void setTipoEnvioRadioButtons() {
-        // Crear el ButtonGroup
-        //buttonGroup1 = new ButtonGroup();
+    private void actualizarVisibilidadDireccion() {
+        boolean esDomicilio = jrbDomicilio.isSelected();
 
-        // Crear radio buttons dinámicamente desde el enum
-       // for (TipoEnvio tipo : TipoEnvio.values()) {
-          //  JRadioButton rb = new JRadioButton(tipo.getValor());
-          //  rb.setActionCommand(tipo.name()); // guardar el enum para recuperar luego
-           // buttonGroup1.add(rb);
-           // JPanelPedido.add(rb); // añadir al panel de pedidos
-       // }
+        txtDireccion.setVisible(esDomicilio);
+        lblDireccion.setVisible(esDomicilio);
 
-        // Opcional: no seleccionar ninguno al inicio
-      //  buttonGroup1.clearSelection();
- //   }
+        if (!esDomicilio) {
+            txtDireccion.setText(""); // para que no se quede texto viejo
+        }
+    }
 
     private void setTableModels() {
         dtmCalzados = new DefaultTableModel();
@@ -225,8 +246,8 @@ public class Vista extends JFrame {
         dtmTiendas = new DefaultTableModel();
         tiendasTabla.setModel(dtmTiendas);
 
-      //  dtmPedidos = new DefaultTableModel();
-     //   pedidosTabla.setModel(dtmPedidos);
+        dtmPedidos = new DefaultTableModel();
+        pedidosTabla.setModel(dtmPedidos);
     }
 
     public void mostrarDialogDesconectado() {

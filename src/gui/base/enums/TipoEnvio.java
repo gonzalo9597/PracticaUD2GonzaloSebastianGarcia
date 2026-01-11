@@ -8,12 +8,20 @@ public enum TipoEnvio {
     private String valor;
 
     TipoEnvio(String valor) {
-
         this.valor = valor;
     }
 
     public String getValor() {
-
         return valor;
     }
+
+    public static TipoEnvio fromValor(String valor) {
+        for (TipoEnvio t : values()) {
+            if (t.valor.equalsIgnoreCase(valor)) {
+                return t;
+            }
+        }
+        throw new IllegalArgumentException("Tipo de envío desconocido: " + valor);
+    }
 }
+
